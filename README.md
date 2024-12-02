@@ -34,17 +34,21 @@ Running Docker Project:
    - Open a terminal or command prompt and navigate to the directory where the folder is located.
     cd /path to the folder
 
-2. Build and Run Docker Containers as a daemon process:
+2. Setting up the youtube API: create a .env file and provide your API key here.
+   YOUTUBE_API_KEY=your_api_key_here
+
+
+3. Build and Run Docker Containers as a daemon process:
    docker-compose up -d --build 
 
-3. To check the working of the containers:
+4. To check the working of the containers:
     docker ps
     docker images
 
-4. to check functionality of any 1 container:
+5. to check functionality of any 1 container:
     docker-compose logs <container_name>
 
-5. to check the predictions made for the videos:
+6. to check the predictions made for the videos:
     docker-compose logs mlp_model
 
 ------------------------------------------------------------------------------------------------------------------------------------------
