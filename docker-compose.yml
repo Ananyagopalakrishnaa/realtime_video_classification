@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - youtube_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - youtube_network
+
+  youtube_data_fetcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - youtube_network
+
+  mlp_model:
+    image: mlp_model:latest
+    build:
+      context: .
+      dockerfile: mlp.Dockerfile
+    volumes:
+      - ./mlp_script.py:/app/mlp_script.py
+    depends_on:
+      - kafka
+    networks:
+      - youtube_network
+
+networks:
+  youtube_network:
